@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InstaFlow • Seguidores/Seguidos &amp; Ley de Benford</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/gallery.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/audience.css') }}">
+</head>
+<body>
+  <div class="app-container">
+    <!-- BARRA LATERAL N8N -->
+    <aside class="app-sidebar">
+      <div class="brand-wrapper">
+        <div class="brand-logo-icon">⚡</div>
+        <div>
+          <div class="brand-title">InstaFlow</div>
+          <div class="brand-subtitle">Scraping & Analytics</div>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <li class="nav-item">
+          <a href="/">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/profile">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            Detalle Perfil
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/bigfive">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            BIG FIVE
+          </a>
+        </li>
+        <li class="nav-item active">
+          <a href="/audience">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            Seguidores/Seguidos
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/settings">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            Configuración
+          </a>
+        </li>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div><strong>InstaFlow</strong> v1.0.0</div>
+        <div>Módulo de Audiencia &amp; Ley de Benford</div>
+      </div>
+    </aside>
+
+    <!-- ÁREA PRINCIPAL -->
+    <main class="app-main">
+      <header class="app-header">
+        <div class="header-left">
+          <h2 style="font-size: 16px; font-weight: 700;">Seguidores/Seguidos &amp; Ley de Benford</h2>
+          <span id="audience-mode-badge" class="status-badge audience-mode-badge" data-mode="{{ audience_mode }}">
+            <span class="status-dot active"></span>
+            Modo actual: <strong>{{ 'Seguidores' if audience_mode == 'followers' else 'Seguidos' }}</strong>
+          </span>
+        </div>
+        <div class="header-right">
+          <a href="/" class="btn btn-secondary">← Volver al Dashboard</a>
+        </div>
+      </header>
+
+      <div class="dashboard-content">
+        <p class="audience-intro-note">
+          El modo (seguidores o seguidos) se alterna únicamente en el código, en
+          <code>scraper/audience_extractor.py</code> (<code>AudienceExtractor.MODE</code>), tal
+          como se pidió — por eso aquí no hay un interruptor en la interfaz.
+        </p>
+
+        <!-- PANEL DE ENTRADA -->
+        <section class="scraper-input-card">
+          <div class="input-row">
+            <div class="form-group flex-1">
+              <label class="form-label" for="audience-input-username">Perfil objetivo (ya scrapeado o nuevo)</label>
+              <div class="input-wrapper">
+                <span class="input-icon-prefix">@</span>
+                <input
+                  type="text"
+                  id="audience-input-username"
+                  class="form-input"
+                  placeholder="ejemplo"
+                  value="{{ default_username }}"
+                  autocomplete="off"
+                  spellcheck="false"
+                >
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="audience-select-limit">Cantidad de perfiles a analizar</label>
+              <select id="audience-select-limit" class="form-select">
+                {% for opt in audience_limit_options %}
+                <option value="{{ opt }}" {% if opt == default_audience_limit %}selected{% endif %}>{{ opt }} perfiles</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="form-group" style="align-self: flex-end;">
+              <button id="audience-btn-start" class="btn btn-primary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                Analizar audiencia
+              </button>
+            </div>
+
+            <div class="form-group" style="align-self: flex-end;">
+              <button id="audience-btn-cancel" class="btn btn-danger" style="display: none;">
+                Cancelar ejecución
+              </button>
+            </div>
+          </div>
+
+          <div class="checkbox-group">
+            <label class="custom-checkbox">
+              <input type="checkbox" id="audience-chk-download-images" checked>
+              <span>Descargar y validar avatares locales (Pillow)</span>
+            </label>
+          </div>
+
+          <div class="audience-warning-box">
+            ⚠️ Analizar entre 200 y 1000 perfiles implica consultar el propio contador de
+            seguidores de cada uno. Esto puede tardar varios minutos, y es posible que
+            Instagram limite o bloquee la sesión antes de completar lotes grandes —
+            la ejecución se detiene de forma segura si eso ocurre y conserva lo ya recolectado.
+          </div>
+
+          <!-- BARRA DE PROGRESO -->
+          <div class="progress-container">
+            <div id="audience-progress-bar" class="progress-bar-fill"></div>
+          </div>
+        </section>
+
+        <!-- ETAPAS Y REGISTRO -->
+        <section class="activity-card">
+          <div class="card-title-group">
+            <div class="card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+              Etapas de Ejecución
+            </div>
+          </div>
+          <div id="audience-stages-container" class="stages-timeline">
+            <div style="color: var(--text-muted); font-size: 13px; padding: 20px 0; text-align: center;">
+              Pulse «Analizar audiencia» para ver el avance en tiempo real.
+            </div>
+          </div>
+          <div>
+            <label class="form-label">Registro de Eventos en Vivo</label>
+            <div id="audience-logs-console" class="logs-console"></div>
+          </div>
+        </section>
+
+        <!-- RESULTADOS: LEY DE BENFORD -->
+        <section id="audience-benford-section" class="activity-card" style="display: none;">
+          <div class="card-title-group">
+            <div class="card-title">📊 Ley de Benford — Primer Dígito de Seguidores</div>
+            <span id="audience-classification-badge" class="audience-classification-badge">—</span>
+          </div>
+
+          <div class="benford-layout">
+            <div class="benford-chart-wrapper">
+              <canvas id="audience-benford-canvas" width="640" height="320"></canvas>
+              <div class="benford-legend">
+                <span class="legend-item"><span class="legend-swatch legend-theoretical"></span>Curva teórica de Benford</span>
+                <span class="legend-item"><span class="legend-swatch legend-observed"></span>Distribución observada</span>
+              </div>
+            </div>
+            <div class="benford-stats-panel">
+              <div class="benford-stat">
+                <span class="benford-stat-label">Muestra válida (n)</span>
+                <span id="audience-stat-sample" class="benford-stat-value">—</span>
+              </div>
+              <div class="benford-stat">
+                <span class="benford-stat-label">Chi-cuadrado (χ²)</span>
+                <span id="audience-stat-chi2" class="benford-stat-value">—</span>
+              </div>
+              <div class="benford-stat">
+                <span class="benford-stat-label">Grados de libertad</span>
+                <span id="audience-stat-df" class="benford-stat-value">8</span>
+              </div>
+              <div class="benford-stat">
+                <span class="benford-stat-label">Umbrales</span>
+                <span id="audience-stat-thresholds" class="benford-stat-value" style="font-size: 12px;">—</span>
+              </div>
+              <p id="audience-verdict-message" class="benford-verdict-message"></p>
+            </div>
+          </div>
+        </section>
+
+        <!-- RESULTADOS: TABLA DE AUDIENCIA -->
+        <section id="audience-table-section" class="gallery-section" style="display: none;">
+          <div class="gallery-controls-card">
+            <span id="audience-table-count" style="font-size: 13px; color: var(--text-muted); font-weight: 500;">
+              0 perfiles
+            </span>
+          </div>
+          <div class="audience-table-wrapper">
+            <table class="audience-table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Usuario</th>
+                  <th>Nombre</th>
+                  <th>Seguidores</th>
+                  <th>Seguidos</th>
+                  <th>Publicaciones</th>
+                  <th>Privada</th>
+                </tr>
+              </thead>
+              <tbody id="audience-table-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <div id="audience-empty-state" class="empty-gallery">
+          <div class="empty-gallery-icon">👥</div>
+          <div class="empty-gallery-title">Analiza la audiencia de un perfil</div>
+          <div class="empty-gallery-desc">
+            Introduce un usuario de Instagram y la cantidad de perfiles a analizar para
+            extraer su listado de {{ 'seguidores' if audience_mode == 'followers' else 'seguidos' }}
+            y aplicar la Ley de Benford sobre sus propios contadores de seguidores.
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- TARJETA FLOTANTE AL PASAR EL MOUSE SOBRE UN USUARIO -->
+  <div id="audience-hover-card" class="audience-hover-card">
+    <div class="audience-hover-avatar-wrap">
+      <img id="audience-hover-avatar" class="audience-hover-avatar" src="/static/img/placeholder.svg" alt="Avatar">
+    </div>
+    <div class="audience-hover-username-row">
+      <span id="audience-hover-username">@usuario</span>
+      <span id="audience-hover-verified" class="badge-verified" style="display: none;" title="Cuenta verificada">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="#3897f0"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+      </span>
+    </div>
+    <div class="audience-hover-stats-row">
+      <div><strong id="audience-hover-posts">—</strong><span>publicaciones</span></div>
+      <div><strong id="audience-hover-followers">—</strong><span>seguidores</span></div>
+      <div><strong id="audience-hover-following">—</strong><span>seguidos</span></div>
+    </div>
+    <button type="button" class="audience-hover-follow-btn" tabindex="-1" title="Vista previa únicamente — no realiza ninguna acción">Seguir</button>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="{{ url_for('static', filename='js/api.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/audience.js') }}"></script>
+</body>
+</html>

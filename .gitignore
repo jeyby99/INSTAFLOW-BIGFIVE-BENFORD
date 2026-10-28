@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+# Python Virtual Environments
+venv/
+.venv/
+
+# Sensitive configuration & keys (env/ folder): solo se suben las plantillas
+env/*
+!env/.gitkeep
+!env/cookies.example.json
+!env/api_key.example.txt
+cookies.json
+*.cookie
+*.session
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Datos generados en ejecución (perfiles scrapeados de personas reales,
+# base de datos, imágenes y capturas de diagnóstico)
+data/
+media/
+screenshots/
+.pytest_cache/
+
+# Configuración local de Claude Code
+.claude/

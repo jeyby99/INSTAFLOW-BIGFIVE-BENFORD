@@ -1,0 +1,5 @@
+[
+  {"name": "sessionid", "value": "PEGA_AQUI_TU_SESSIONID", "domain": ".instagram.com", "path": "/", "secure": true, "httpOnly": true},
+  {"name": "ds_user_id", "value": "PEGA_AQUI_TU_DS_USER_ID", "domain": ".instagram.com", "path": "/", "secure": true, "httpOnly": false},
+  {"name": "csrftoken", "value": "PEGA_AQUI_TU_CSRFTOKEN", "domain": ".instagram.com", "path": "/", "secure": true, "httpOnly": false}
+]
